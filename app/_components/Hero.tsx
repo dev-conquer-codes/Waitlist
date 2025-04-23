@@ -1,53 +1,23 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Mail, Loader2 } from "lucide-react";
+import { Mail } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 
 export default function HomePage() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  const isValidEmail = (email: any) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const handleJoinWaitlist = async () => {
-    if (!email.trim()) {
-      toast("Email field cannot be empty.");
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      toast("Please enter a valid email address.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_RENDER}/user/add_user`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        toast("You have successfully joined the waitlist!");
-        setEmail(""); // Clear the input field on success
-      } else {
-        throw new Error(data?.message || "Something went wrong.");
-      }
-    } catch (error: any) {
-      toast(error.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleClick = () => {
+    toast("Redirecting to resume dashboard...");
+    router.push("/resume_dashboard");
   };
 
   return (
@@ -78,31 +48,15 @@ export default function HomePage() {
           Personalized Job Listings, AI-Generated Resumes and <br /> Mock AI Interviews in One Platform
         </p>
 
-        {/* Skeleton loader while hydrating */}
-        {!isHydrated ? (
-          <div className="mt-8 w-full max-w-md flex flex-col sm:flex-row justify-center gap-4">
-            <div className="w-full h-12 bg-gray-300 animate-pulse rounded-lg" />
-            <div className="w-full sm:w-auto h-12 bg-gray-300 animate-pulse rounded-lg" />
-          </div>
-        ) : (
-          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4 w-full max-w-md">
-            <input
-              type="email"
-              placeholder="Enter Your Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-5 py-3 border bg-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200 text-gray-700 h-12"
-            />
-            <div className="w-full sm:w-auto flex justify-center">
-              <Button
-                variant="default"
-                onClick={handleJoinWaitlist}
-                className="bg-[#2297F4] text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 h-12 flex items-center justify-center"
-                disabled={loading}
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Join Waitlist"}
-              </Button>
-            </div>
+        {isHydrated && (
+          <div className="mt-12 flex flex-col items-center">
+            <Button
+              variant="default"
+              onClick={handleClick}
+              className="bg-[#2297F4] text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-300 h-12 flex items-center justify-center text-lg font-semibold"
+            >
+              Build your free resume
+            </Button>
           </div>
         )}
       </main>
