@@ -78,7 +78,7 @@ const initialResumeData: ResumeData = {
   extraSectionPosition: "sidebar"
 };
 
-const ResumeFinal = (id:any) => {
+const ResumeFinal = () => {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
   const [resumeType, setResumeType] = useState<ResumeType>("experienced");
   const { toast } = useToast();
