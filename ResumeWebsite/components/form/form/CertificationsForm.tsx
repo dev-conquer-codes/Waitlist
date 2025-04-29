@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Certification } from '../types/resume';
+import { Certification } from '@/ResumeWebsite/types/resume';
 import { v4 as uuidv4 } from 'uuid';
 
 interface CertificationsFormProps {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Skill } from "@/ResumeWebsite/types/resume";
+import { Skill } from "@/ResumeWebsite/types/resume1";
 
 interface SkillsSectionProps {
   skills: Skill[];

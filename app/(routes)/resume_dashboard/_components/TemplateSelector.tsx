@@ -7,11 +7,15 @@ import { useRouter, usePathname } from 'next/navigation';
 const sampleTemplates = [
   {
     id: '1',
-    imageUrl: 'https://res.cloudinary.com/dzonq5wlk/image/upload/v1745312492/John_Doe_resume_5__page-0001_hnm6ra.jpg',
+    imageUrl: 'https://res.cloudinary.com/dzonq5wlk/image/upload/v1745922534/John_Doe_resume_23__page-0001_iahcvc.jpg',
   },
   {
     id: '2',
-    imageUrl: 'https://res.cloudinary.com/dzonq5wlk/image/upload/v1745312484/John_Doe_resume_4__page-0001_vp7jar.jpg',
+    imageUrl: 'https://res.cloudinary.com/dzonq5wlk/image/upload/v1745922662/John_Doe_resume_21__page-0001_effzrn.jpg',
+  },
+  {
+    id: '3',
+    imageUrl: 'https://res.cloudinary.com/dzonq5wlk/image/upload/v1745922626/John_Doe_resume_22__page-0001_xqkiby.jpg',
   },
 ];
 

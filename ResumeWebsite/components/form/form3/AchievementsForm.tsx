@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Achievement } from '../../types/resume';
+import { Achievement } from '@//ResumeWebsite/types/resume';
 import { v4 as uuidv4 } from 'uuid';
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/ResumeWebsite/components/ui/use-toast";
 
 interface AchievementsFormProps {
   achievements: Achievement[];

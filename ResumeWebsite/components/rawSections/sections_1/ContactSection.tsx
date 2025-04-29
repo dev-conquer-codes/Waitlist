@@ -1,4 +1,4 @@
-import { PersonalInfo } from '@/ResumeWebsite/types/resume';
+import { PersonalInfo } from '@/ResumeWebsite/types/resume1';
 import React from 'react';
 
 interface ContactSectionProps {

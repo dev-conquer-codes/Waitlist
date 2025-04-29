@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Project } from "@/ResumeWebsite/types/resume";
+import { Project } from "@/ResumeWebsite/types/resume1";
 
 interface ProjectsSectionProps {
   projects: Project[];

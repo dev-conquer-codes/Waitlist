@@ -4,23 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Experience, MAX_DESCRIPTION_LENGTH, MAX_EXPERIENCES } from "../../types/resume";
+import { Project, MAX_DESCRIPTION_LENGTH, MAX_PROJECTS } from "@/ResumeWebsite/types/resume";
 import { Plus, X } from "lucide-react";
-import { Card, CardContent } from '../ui/card';
-import { Alert, AlertDescription } from '../ui/alert';
+import { Card, CardContent } from '@/ResumeWebsite/components/ui/card';
+import { Alert, AlertDescription } from '@/ResumeWebsite/components/ui/alert';
 
-interface ExperienceFormProps {
-  experience: Experience[];
-  onChange: (experience: Experience[]) => void;
+interface ProjectFormProps {
+  projects: Project[];
+  onChange: (projects: Project[]) => void;
 }
 
-const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
+const ProjectForm = ({ projects, onChange }: ProjectFormProps) => {
   const [newDescription, setNewDescription] = useState('');
   const [descriptions, setDescriptions] = useState<string[]>([]);
-  const [newExperience, setNewExperience] = useState<Omit<Experience, 'id' | 'descriptions'>>({
-    position: '',
-    company: '',
-    location: '',
+  const [newProject, setNewProject] = useState<Omit<Project, 'id' | 'descriptions'>>({
+    title: '',
+    technologies: '',
     startDate: '',
     endDate: '',
   });
@@ -38,23 +37,22 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
     setDescriptions(newDescriptions);
   };
 
-  const handleAddExperience = () => {
-    if (!newExperience.position || !newExperience.company || !descriptions.length) {
+  const handleAddProject = () => {
+    if (!newProject.title || !newProject.technologies || !descriptions.length) {
       return;
     }
 
-    if (experience.length >= MAX_EXPERIENCES) {
+    if (projects.length >= MAX_PROJECTS) {
       return;
     }
 
-    const id = `exp-${Date.now()}`;
-    onChange([...experience, { ...newExperience, id, descriptions }]);
+    const id = `proj-${Date.now()}`;
+    onChange([...projects, { ...newProject, id, descriptions }]);
     
     // Reset the form
-    setNewExperience({
-      position: '',
-      company: '',
-      location: '',
+    setNewProject({
+      title: '',
+      technologies: '',
       startDate: '',
       endDate: '',
     });
@@ -62,59 +60,55 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
     setNewDescription('');
   };
 
-  const handleRemoveExperience = (id: string) => {
-    onChange(experience.filter(exp => exp.id !== id));
+  const handleRemoveProject = (id: string) => {
+    onChange(projects.filter(project => project.id !== id));
   };
 
   return (
     <div className="space-y-6">
-      {experience.length >= MAX_EXPERIENCES && (
+      {projects.length >= MAX_PROJECTS && (
         <Alert className="bg-amber-50 text-amber-800 border-amber-200">
           <AlertDescription>
-            You've reached the maximum limit of {MAX_EXPERIENCES} experiences to maintain a one-page resume.
+            You've reached the maximum limit of {MAX_PROJECTS} projects to maintain a one-page resume.
           </AlertDescription>
         </Alert>
       )}
 
-      {experience.map((exp) => (
-        <Card key={exp.id} className="relative">
+      {projects.map((project) => (
+        <Card key={project.id} className="relative">
           <Button
             variant="ghost"
             size="icon"
             className="absolute top-2 right-2 h-8 w-8 rounded-full"
-            onClick={() => handleRemoveExperience(exp.id)}
+            onClick={() => handleRemoveProject(project.id)}
           >
             <X className="h-4 w-4" />
           </Button>
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <Label>Position</Label>
-                <div className="font-medium">{exp.position}</div>
+                <Label>Project Title</Label>
+                <div className="font-medium">{project.title}</div>
               </div>
               <div className="space-y-2">
-                <Label>Company</Label>
-                <div className="font-medium">{exp.company}</div>
+                <Label>Technologies</Label>
+                <div>{project.technologies}</div>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div className="space-y-2">
-                <Label>Location</Label>
-                <div>{exp.location}</div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="space-y-2">
                 <Label>Start Date</Label>
-                <div>{exp.startDate}</div>
+                <div>{project.startDate}</div>
               </div>
               <div className="space-y-2">
                 <Label>End Date</Label>
-                <div>{exp.endDate}</div>
+                <div>{project.endDate}</div>
               </div>
             </div>
             <div className="mt-4">
               <Label>Descriptions</Label>
               <ul className="list-disc ml-5 mt-2">
-                {exp.descriptions.map((desc, index) => (
+                {project.descriptions.map((desc, index) => (
                   <li key={index}>{desc}</li>
                 ))}
               </ul>
@@ -123,49 +117,39 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
         </Card>
       ))}
 
-      {experience.length < MAX_EXPERIENCES && (
+      {projects.length < MAX_PROJECTS && (
         <div className="space-y-4 border rounded-lg p-4">
-          <h3 className="font-medium">Add Experience</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="position">Position *</Label>
-              <Input
-                id="position"
-                value={newExperience.position}
-                onChange={(e) => setNewExperience({ ...newExperience, position: e.target.value })}
-                placeholder="Software Engineer"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="company">Company *</Label>
-              <Input
-                id="company"
-                value={newExperience.company}
-                onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
-                placeholder="Tech Company"
-                required
-              />
-            </div>
+          <h3 className="font-medium">Add Project</h3>
+          <div className="space-y-2">
+            <Label htmlFor="title">Project Title *</Label>
+            <Input
+              id="title"
+              value={newProject.title}
+              onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+              placeholder="Personal Portfolio Website"
+              required
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={newExperience.location}
-                onChange={(e) => setNewExperience({ ...newExperience, location: e.target.value })}
-                placeholder="City, State"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="technologies">Technologies *</Label>
+            <Input
+              id="technologies"
+              value={newProject.technologies}
+              onChange={(e) => setNewProject({ ...newProject, technologies: e.target.value })}
+              placeholder="React, Tailwind CSS, TypeScript"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="startDate">Start Date *</Label>
               <Input
                 id="startDate"
-                value={newExperience.startDate}
-                onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
-                placeholder="Jan 2021"
+                value={newProject.startDate}
+                onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
+                placeholder="Dec 2020"
                 required
               />
             </div>
@@ -173,9 +157,9 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
               <Label htmlFor="endDate">End Date *</Label>
               <Input
                 id="endDate"
-                value={newExperience.endDate}
-                onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
-                placeholder="Present"
+                value={newProject.endDate}
+                onChange={(e) => setNewProject({ ...newProject, endDate: e.target.value })}
+                placeholder="Jan 2021 or Present"
                 required
               />
             </div>
@@ -202,7 +186,7 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
                   id="descriptions"
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  placeholder="Developed and maintained web applications using React and Node.js"
+                  placeholder="Built a responsive portfolio website showcasing projects and skills"
                   maxLength={MAX_DESCRIPTION_LENGTH}
                   className="flex-1"
                 />
@@ -225,12 +209,12 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
 
           <Button 
             type="button" 
-            onClick={handleAddExperience}
+            onClick={handleAddProject}
             className="mt-2"
-            disabled={!newExperience.position || !newExperience.company || descriptions.length === 0}
+            disabled={!newProject.title || !newProject.technologies || descriptions.length === 0}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Experience
+            Add Project
           </Button>
         </div>
       )}
@@ -238,4 +222,4 @@ const ExperienceForm = ({ experience, onChange }: ExperienceFormProps) => {
   );
 };
 
-export default ExperienceForm;
+export default ProjectForm;

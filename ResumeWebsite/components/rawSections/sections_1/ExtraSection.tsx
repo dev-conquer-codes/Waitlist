@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Achievement, Certification } from "@/ResumeWebsite/types/resume";
+import { Achievement, Certification } from "@/ResumeWebsite/types/resume1";
 
 interface ExtraSectionProps {
   achievements: Achievement[];

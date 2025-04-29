@@ -1,40 +1,122 @@
+
 import React from 'react';
-import { ResumeData } from "../../types/resume";
-import MainContent from '../rawSections/sections_1/MainContent';
-import SideContent from '../rawSections/sections_1/SideContent';
+import { ResumeData } from "@/ResumeWebsite/types/resume";
+import SummarySection from '../rawSections/sections/SummarySection';
+import EducationSection from '../rawSections/sections/EducationSection';
+import MainContent from '../rawSections/sections/MainContent';
+import ExtraSection from '../rawSections/sections/ExtraSection';
+
+
 interface ClassicResumePreviewProps {
   resumeData: ResumeData;
 }
+
 const ClassicResumePreview: React.FC<ClassicResumePreviewProps> = ({
   resumeData
 }) => {
-  const {
-    personalInfo, extraSection, extraSectionPosition
-  } = resumeData;
-  const {
-    sectionHeadingClass,
-    sectionSpacing,
-    bulletPointClass
-  } = {
-    sectionHeadingClass: "text-[#0F52BA] text-lg font-bold border-b border-[#0F52BA] pb-1 mb-4",
-    sectionSpacing: "mb-6",
-    bulletPointClass: "ml-5 before:content-['•'] before:absolute before:left-0 before:text-[#0F52BA] relative pl-4"
+  const { personalInfo, education, skills, achievements, certifications, extraSection } = resumeData;
+
+  const formatUrl = (url: string) => {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `https://${url}`;
   };
-  return <div id="resume-preview" className="w-[210mm] h-[297mm] bg-white mx-auto shadow-lg overflow-hidden flex">
-      <div className="w-[70%] p-10">
-        <header className="mb-8">
-          <h1 className="text-[#0F52BA] text-4xl font-bold mb-1">{personalInfo.fullName}</h1>
-          <p className="text-gray-700 text-lg mb-3">{personalInfo.title}</p>
-          {personalInfo.summary && <div className="mb-4">
-              <h2 className={sectionHeadingClass}>SUMMARY</h2>
-              <p className="text-sm text-black text-justify font-normal">{personalInfo.summary}</p>
-            </div>}
-        </header>
+
+  return (
+    <div id="resume-preview" className="w-[210mm] h-[297mm] bg-white mx-auto p-12 overflow-hidden">
+      <header className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-2">{personalInfo.fullName}</h1>
+        <div className="flex items-center justify-center gap-3 text-sm text-gray-600">
+          {personalInfo.location && <span>{personalInfo.location}</span>}
+          {personalInfo.phone && (
+            <>
+              <span className="text-gray-300">•</span>
+              <span>{personalInfo.phone}</span>
+            </>
+          )}
+          {personalInfo.email && (
+            <>
+              <span className="text-gray-300">•</span>
+              <a href={`mailto:${personalInfo.email}`} className="hover:underline">
+                {personalInfo.email}
+              </a>
+            </>
+          )}
+        </div>
+        {(personalInfo.linkedin || personalInfo.website) && (
+          <div className="flex items-center justify-center gap-3 text-sm text-gray-600 mt-1">
+            {personalInfo.linkedin && (
+              <a 
+                href={formatUrl(personalInfo.linkedin)} 
+                className="hover:underline" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </a>
+            )}
+            {personalInfo.linkedin && personalInfo.website && <span className="text-gray-300">•</span>}
+            {personalInfo.website && (
+              <a 
+                href={formatUrl(personalInfo.website)} 
+                className="hover:underline" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Portfolio
+              </a>
+            )}
+          </div>
+        )}
+      </header>
+
+      <div className="space-y-6">
+        {personalInfo.summary && (
+          <SummarySection 
+            summary={personalInfo.summary}
+            sectionHeadingClass="text-lg font-semibold mb-2 pb-1 border-b border-gray-200"
+            sectionSpacing="mb-6"
+          />
+        )}
         
-        <MainContent resumeData={resumeData} sectionHeadingClass={sectionHeadingClass} sectionSpacing={sectionSpacing} bulletPointClass={bulletPointClass} />
+        {education.length > 0 && (
+          <EducationSection education={education} />
+        )}
+        
+        <MainContent 
+          resumeData={resumeData}
+          sectionHeadingClass="text-lg font-semibold mb-2 pb-1 border-b border-gray-200"
+          sectionSpacing="mb-6"
+          bulletPointClass="ml-4 before:content-['•'] before:mr-2 before:text-gray-400"
+        />
+
+        {skills.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-2 pb-1 border-b border-gray-200">Skills</h2>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {skills.map((skill) => (
+                <span 
+                  key={skill.id} 
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                >
+                  {skill.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(extraSection !== 'none' && (achievements.length > 0 || certifications.length > 0)) && (
+          <ExtraSection
+            achievements={achievements}
+            certifications={certifications}
+            extraSection={extraSection}
+            sectionHeadingClass="text-lg font-semibold mb-2 pb-1 border-b border-gray-200"
+            sectionSpacing="mb-6"
+          />
+        )}
       </div>
-      
-      <SideContent resumeData={resumeData} />
-    </div>;
+    </div>
+  );
 };
+
 export default ClassicResumePreview;

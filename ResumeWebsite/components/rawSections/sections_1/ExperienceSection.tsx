@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Experience } from "@/ResumeWebsite/types/resume";
+import { Experience } from "@/ResumeWebsite/types/resume1";
 
 interface ExperienceSectionProps {
   experience: Experience[];

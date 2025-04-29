@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skill, MAX_SKILLS } from "../../types/resume";
+import { Skill, MAX_SKILLS } from "@/ResumeWebsite/types/resume";
 import { Plus, X } from "lucide-react";
-import { Alert, AlertDescription } from '../ui/alert';
+import { Alert, AlertDescription } from '@/ResumeWebsite/components/ui/alert';
 
 interface SkillsFormProps {
   skills: Skill[];

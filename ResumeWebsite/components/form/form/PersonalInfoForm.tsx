@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { PersonalInfo, MAX_SUMMARY_LENGTH } from "../types/resume";
+import { PersonalInfo, MAX_SUMMARY_LENGTH } from "@/ResumeWebsite/types/resume";
 
 interface PersonalInfoFormProps {
   personalInfo: PersonalInfo;

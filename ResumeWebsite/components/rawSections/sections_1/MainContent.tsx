@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ResumeData } from "@/ResumeWebsite/types/resume";
+import { ResumeData } from "@/ResumeWebsite/types/resume1";
 import ExperienceSection from './ExperienceSection';
 import ProjectsSection from './ProjectsSection';
 import ExtraSection from './ExtraSection';

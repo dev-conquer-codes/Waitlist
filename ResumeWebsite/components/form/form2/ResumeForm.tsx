@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ResumeData, ExtraSection, ExtraSectionPosition } from "../../types/resume";
+import { ResumeData, ExtraSection, ExtraSectionPosition } from "@/ResumeWebsite/types/resume2";
 import PersonalInfoForm from "./PersonalInfoForm";
 import EducationForm from "./EducationForm";
 import ExperienceForm from "./ExperienceForm";
@@ -126,14 +126,15 @@ const ResumeForm = ({ resumeData, onChange }: ResumeFormProps) => {
                       value={extraSectionPosition}
                       onValueChange={(value: ExtraSectionPosition) => handlePositionChange(value)}
                     >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="sidebar" id="position-sidebar" />
-                        <Label htmlFor="position-sidebar">Sidebar</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
+                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="bottom" id="position-bottom" />
                         <Label htmlFor="position-bottom">Bottom</Label>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sidebar" id="position-sidebar" />
+                        <Label htmlFor="position-sidebar">Sidebar(Works only when sidebar exist)</Label>
+                      </div>
+                     
                     </RadioGroup>
                   </div>
                 )}

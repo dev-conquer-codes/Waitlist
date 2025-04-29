@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Project, MAX_DESCRIPTION_LENGTH, MAX_PROJECTS } from "../types/resume";
+import { Project, MAX_DESCRIPTION_LENGTH, MAX_PROJECTS } from "@/ResumeWebsite/types/resume2";
 import { Plus, X } from "lucide-react";
-import { Card, CardContent } from './ui/card';
-import { Alert, AlertDescription } from './ui/alert';
+import { Card, CardContent } from '@/ResumeWebsite/components/ui/card';
+import { Alert, AlertDescription } from '@/ResumeWebsite/components/ui/alert';
 
 interface ProjectFormProps {
   projects: Project[];

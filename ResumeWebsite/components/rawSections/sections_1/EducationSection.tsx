@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Education } from "@/ResumeWebsite/types/resume";
+import { Education } from "@/ResumeWebsite/types/resume1";
 
 interface EducationSectionProps {
   education: Education[];

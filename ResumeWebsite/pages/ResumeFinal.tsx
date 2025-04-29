@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ResumeData, ResumeType } from '../types/resume';
+import { ResumeData, ResumeType } from '@/ResumeWebsite/types/resume';
+import ResumeForm from '@/ResumeWebsite/components/form/form/ResumeForm';
 
-import { generatePdf } from '../utils/pdfUtils';
+import { generatePdf } from '@/ResumeWebsite/utils/pdfUtils';
 import { Download } from 'lucide-react';
-import { useToast } from '../components/ui/use-toast';
+import { useToast } from '@/ResumeWebsite/components/ui/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card, CardContent } from "../components/ui/card";
-import { Mail } from 'lucide-react';
-import React from 'react';
-import Image from 'next/image';
-import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import axios from 'axios';
-import ResumeForm from '../components/form/ResumeForm';
+import { Card, CardContent } from "@/ResumeWebsite/components/ui/card";
+import ClassicResumePreview2 from '../components/matureSections/ClassicResumePreview2';
+import ClassicResumePreview3 from '../components/matureSections/ClassicResumePreview3';
 import ClassicResumePreview from '../components/matureSections/ClassicResumePreview';
+
 const initialResumeData: ResumeData = {
   type: "experienced",
   personalInfo: {
@@ -59,26 +57,23 @@ const initialResumeData: ResumeData = {
       "Implemented dark mode and accessibility features"
     ]
   }],
-  skills: [{
-    id: "skill-1",
-    name: "JavaScript"
-  }, {
-    id: "skill-2",
-    name: "React"
-  }, {
-    id: "skill-3",
-    name: "Node.js"
-  }, {
-    id: "skill-4",
-    name: "TypeScript"
-  }],
+  skills: [
+    { id: "skill-1", name: "JavaScript" },
+    { id: "skill-2", name: "React" },
+    { id: "skill-3", name: "Node.js" },
+    { id: "skill-4", name: "TypeScript" }
+  ],
   achievements: [],
   certifications: [],
   extraSection: "none",
-  extraSectionPosition: "sidebar"
+  extraSectionPosition: "bottom"
 };
 
-const ResumeFinal = () => {
+interface ResumeFinalProps {
+  id: string;
+}
+
+const ResumeFinal: React.FC<ResumeFinalProps> = ({ id }) => {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
   const [resumeType, setResumeType] = useState<ResumeType>("experienced");
   const { toast } = useToast();
@@ -90,12 +85,14 @@ const ResumeFinal = () => {
       type
     }));
   };
+
   const handleFormChange = (updatedData: Partial<ResumeData>) => {
     setResumeData(prevData => ({
       ...prevData,
       ...updatedData
     }));
   };
+
   const handleDownload = async () => {
     try {
       await generatePdf('resume-preview', `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_resume`);
@@ -111,107 +108,46 @@ const ResumeFinal = () => {
       });
     }
   };
-  const {user}=useUser();
-useEffect(()=>{
-  if(!user?.id) return;
-saveResumeData()
-},[resumeData,user?.id])
 
-  const saveResumeData = async () => {
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_RENDER}/user/save_user_resume_data`, {
-        recordId: user?.id,
-        template_id: 1, // change accordingly
-        resume_data: resumeData,
-      });
-
-      toast({
-        title: "Resume Auto-Saved",
-        description: "Changes saved successfully.",
-      });
-    } catch (error) {
-      console.error("Error saving resume data:", error);
-      toast({
-        title: "Save Failed",
-        description: "Could not save resume data.",
-        variant: "destructive",
-      });
-    }
-  };
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+      {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
-             <div className="max-w-screen-xl mx-auto px-4 py-4 flex justify-between items-center">
-               {/* <div>
-                 <h1 className="text-3xl font-bold text-resume-primary">Conquer Jobs  </h1>
-                 <p className="text-resume-gray mt-1">Create a professional resume in minutes</p>
-               </div> */}
-               <div className="flex items-center justify-center py-4 mt-4">
-             <div className="flex items-center gap-2 absolute left-8">
-               <Image
-                 className="w-8 h-8"
-                 src="https://conquercodes.com/images/logo.png"
-                 alt="Conquer Codes Logo"
-                 width={32}
-                 height={32}
-               />
-               <div className="flex flex-col leading-none">
-                 <span className="font-bold text-xl text-gray-800">Conquer Jobs</span>
-                 <span className="text-[10px] text-center text-gray-500">A part of Conquer Codes</span>
-               </div>
-             </div>
-     
-             <div className="absolute right-8 flex items-center gap-2">
-               <SignedIn>
-               <Button 
-                 onClick={handleDownload} 
-                 className="bg-blue-400 mr-4 hover:bg-blue-400 shadow-md transition-all duration-300 hover:shadow-lg"
-               >
-                 <Download className="mr-2 h-4 w-4 " />
-                 Download PDF
-               </Button>
-                 <UserButton afterSignOutUrl="/" />
-               </SignedIn>
-     
-               <SignedOut>
-                 <a
-                   href="mailto:sonuiitian@conquercodes.com"
-                   className="text-gray-600 hover:text-gray-800 text-base transition duration-200 border border-gray-300 px-4 py-2 rounded-md shadow-sm hover:shadow-md hidden sm:block"
-                 >
-                   sonukhairwal@conquercodes.in
-                 </a>
-                 <a
-                   href="mailto:sonuiitian@conquercodes.com"
-                   className="sm:hidden block p-2 border border-gray-300 rounded-md shadow-sm hover:shadow-md transition duration-200"
-                 >
-                   <Mail className="w-6 h-6 text-gray-600" />
-                 </a>
-               </SignedOut>
-             </div>
-           </div>
-             
-             </div>
-           </header>
-           <main className="max-w-screen-xl mx-auto px-4 py-6 sm:py-8">
-        <div className="flex flex-col md:flex-row gap-6">
-          
-          {/* Left Side - Form */}
-          <Card className="w-full md:w-[38%] xl:w-[35%] shadow-md hover:shadow-lg transition-all duration-300">
-            <CardContent className="p-6">
-              <Tabs 
-                defaultValue="experienced" 
-                value={resumeType} 
-                onValueChange={val => handleResumeTypeChange(val as ResumeType)} 
-                className="w-full"
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-resume-primary">Resume Builder</h1>
+            <p className="text-resume-gray mt-1">Create a professional resume in minutes</p>
+          </div>
+          <Button
+            onClick={handleDownload}
+            className="bg-blue-400 hover:bg-blue-700 shadow-md transition-all duration-300 hover:shadow-lg"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download PDF
+          </Button>
+        </div>
+      </header>
+
+      {/* Main Section */}
+      <main className="flex-1 container mx-auto px-4 py-4">
+        <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-128px)]">
+          {/* Left side: Form */}
+          <Card className="flex flex-col w-full md:w-[40%] h-full border-0 shadow-md hover:shadow-lg transition-all duration-300">
+            <CardContent className="flex flex-col p-6 h-full overflow-hidden">
+              <Tabs
+                defaultValue="experienced"
+                value={resumeType}
+                onValueChange={val => handleResumeTypeChange(val as ResumeType)}
+                className="flex-shrink-0"
               >
                 <TabsList className="grid grid-cols-2 mb-6 bg-gray-100/80 p-1 rounded-lg">
-                  <TabsTrigger 
-                    value="experienced" 
+                  <TabsTrigger
+                    value="experienced"
                     className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300"
                   >
                     Experienced
                   </TabsTrigger>
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="fresher"
                     className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300"
                   >
@@ -231,25 +167,25 @@ saveResumeData()
                 </TabsContent>
               </Tabs>
 
-              <ScrollArea className="h-[65vh] md:h-[78vh] xl:h-[85vh] pr-2">
-
+              <ScrollArea className="flex-1 overflow-y-auto pr-3 mt-4">
                 <ResumeForm resumeData={resumeData} onChange={handleFormChange} />
-                
               </ScrollArea>
             </CardContent>
           </Card>
 
-          {/* Right Side - Preview */}
-          <div className="w-full md:w-[62%] xl:w-[65%] bg-white shadow-lg p-2 sm:p-4 rounded-lg overflow-hidden">
-            <ScrollArea className="h-[65vh] sm:h-[80vh] xl:h-[88vh]">
+          {/* Right side: Preview */}
+          <div className="flex flex-col w-full md:w-[80%] h-full bg-white rounded-lg shadow-lg p-4 overflow-hidden">
+            <ScrollArea className="flex-1 overflow-y-auto">
               <div className="flex justify-center items-start">
-                <div className="w-full max-w-[210mm] mx-auto scale-90 sm:scale-75 md:scale-80 xl:scale-90 origin-top transition-all duration-300" id="resume-preview">
-                <ClassicResumePreview resumeData={resumeData}/>
+                <div className="w-full max-w-[210mm] scale-90 sm:scale-75 md:scale-80 xl:scale-90 origin-top transition-all duration-300">
+                  {id=='1' && <ClassicResumePreview resumeData={resumeData} />}
+                  {id=='2' && <ClassicResumePreview2 resumeData={resumeData} />}
+                  {id=='3' && <ClassicResumePreview3 resumeData={resumeData} />}
+                 
                 </div>
               </div>
             </ScrollArea>
           </div>
-
         </div>
       </main>
     </div>

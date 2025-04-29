@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Education } from "../types/resume";
+import { Education } from "@/ResumeWebsite/types/resume";
 import { Plus, X } from "lucide-react";
-import { Card, CardContent } from './ui/card';
+import { Card, CardContent } from '@/ResumeWebsite/components/ui/card';
 
 interface EducationFormProps {
   education: Education[];
