@@ -1,17 +1,20 @@
-import { useState } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ResumeData, ResumeType } from '@/ResumeWebsite/types/resume';
 import ResumeForm from '@/ResumeWebsite/components/form/form/ResumeForm';
-
 import { generatePdf } from '@/ResumeWebsite/utils/pdfUtils';
 import { Download } from 'lucide-react';
 import { useToast } from '@/ResumeWebsite/components/ui/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from "@/ResumeWebsite/components/ui/card";
+import ClassicResumePreview from '../components/matureSections/ClassicResumePreview';
 import ClassicResumePreview2 from '../components/matureSections/ClassicResumePreview2';
 import ClassicResumePreview3 from '../components/matureSections/ClassicResumePreview3';
-import ClassicResumePreview from '../components/matureSections/ClassicResumePreview';
+import axios from 'axios';
 
 const initialResumeData: ResumeData = {
   type: "experienced",
@@ -77,13 +80,11 @@ const ResumeFinal: React.FC<ResumeFinalProps> = ({ id }) => {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
   const [resumeType, setResumeType] = useState<ResumeType>("experienced");
   const { toast } = useToast();
+  const { user } = useUser();
 
   const handleResumeTypeChange = (type: ResumeType) => {
     setResumeType(type);
-    setResumeData(prevData => ({
-      ...prevData,
-      type
-    }));
+    setResumeData(prevData => ({ ...prevData, type }));
   };
 
   const handleFormChange = (updatedData: Partial<ResumeData>) => {
@@ -92,6 +93,28 @@ const ResumeFinal: React.FC<ResumeFinalProps> = ({ id }) => {
       ...updatedData
     }));
   };
+
+  // 🔁 Auto-save to backend whenever resumeData changes
+  useEffect(() => {
+    const saveResumeData = async () => {
+      if (!user?.id) return;
+
+      try {
+        const payload = {
+          recordId: user?.id,
+          template_id: parseInt(id),
+          resume_data: resumeData
+        };
+
+        await axios.post(`${process.env.NEXT_PUBLIC_RENDER}/user/save_user_resume_data`, payload);
+        // Optional: You can toast success but avoid spamming on every keystroke
+      } catch (err) {
+        console.error("Failed to save resume:", err);
+      }
+    };
+
+    saveResumeData();
+  }, [resumeData, user?.id, id]);
 
   const handleDownload = async () => {
     try {
@@ -111,77 +134,63 @@ const ResumeFinal: React.FC<ResumeFinalProps> = ({ id }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-resume-primary">Resume Builder</h1>
             <p className="text-resume-gray mt-1">Create a professional resume in minutes</p>
           </div>
-          <Button
-            onClick={handleDownload}
-            className="bg-blue-400 hover:bg-blue-700 shadow-md transition-all duration-300 hover:shadow-lg"
-          >
+          <Button onClick={handleDownload} className="bg-blue-400 hover:bg-blue-700 shadow-md transition-all duration-300 hover:shadow-lg">
             <Download className="mr-2 h-4 w-4" />
             Download PDF
           </Button>
         </div>
       </header>
 
-      {/* Main Section */}
       <main className="flex-1 container mx-auto px-4 py-4">
         <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-128px)]">
-          {/* Left side: Form */}
+          {/* Left: Form */}
           <Card className="flex flex-col w-full md:w-[40%] h-full border-0 shadow-md hover:shadow-lg transition-all duration-300">
             <CardContent className="flex flex-col p-6 h-full overflow-hidden">
               <Tabs
                 defaultValue="experienced"
                 value={resumeType}
-                onValueChange={val => handleResumeTypeChange(val as ResumeType)}
+                onValueChange={(val) => handleResumeTypeChange(val as ResumeType)}
                 className="flex-shrink-0"
               >
                 <TabsList className="grid grid-cols-2 mb-6 bg-gray-100/80 p-1 rounded-lg">
-                  <TabsTrigger
-                    value="experienced"
-                    className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300"
-                  >
+                  <TabsTrigger value="experienced" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300">
                     Experienced
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="fresher"
-                    className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300"
-                  >
+                  <TabsTrigger value="fresher" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300">
                     Fresher
                   </TabsTrigger>
                 </TabsList>
-
-                <TabsContent value="experienced" className="mt-0">
+                <TabsContent value="experienced">
                   <p className="text-sm text-resume-gray mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
                     For experienced professionals, we'll prioritize your work experience to highlight your career achievements.
                   </p>
                 </TabsContent>
-                <TabsContent value="fresher" className="mt-0">
+                <TabsContent value="fresher">
                   <p className="text-sm text-resume-gray mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
                     For freshers, we'll emphasize your projects and education to showcase your relevant skills and qualifications.
                   </p>
                 </TabsContent>
               </Tabs>
-
               <ScrollArea className="flex-1 overflow-y-auto pr-3 mt-4">
                 <ResumeForm resumeData={resumeData} onChange={handleFormChange} />
               </ScrollArea>
             </CardContent>
           </Card>
 
-          {/* Right side: Preview */}
+          {/* Right: Preview */}
           <div className="flex flex-col w-full md:w-[80%] h-full bg-white rounded-lg shadow-lg p-4 overflow-hidden">
             <ScrollArea className="flex-1 overflow-y-auto">
               <div className="flex justify-center items-start">
                 <div className="w-full max-w-[210mm] scale-90 sm:scale-75 md:scale-80 xl:scale-90 origin-top transition-all duration-300">
-                  {id=='1' && <ClassicResumePreview resumeData={resumeData} />}
-                  {id=='2' && <ClassicResumePreview2 resumeData={resumeData} />}
-                  {id=='3' && <ClassicResumePreview3 resumeData={resumeData} />}
-                 
+                  {id === '1' && <ClassicResumePreview resumeData={resumeData} />}
+                  {id === '2' && <ClassicResumePreview2 resumeData={resumeData} />}
+                  {id === '3' && <ClassicResumePreview3 resumeData={resumeData} />}
                 </div>
               </div>
             </ScrollArea>
